@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from django.db.models import Count
@@ -13,14 +13,12 @@ def home(request):
     return render(request, 'home.html')
 
 @api_view(['POST'])
+@permission_classes([AllowAny])  # Allow unauthenticated access to login
 def login_user(request):
-    print('123')
     username = request.data.get('username')
     password = request.data.get('password')
     device_info = request.data.get('device_info', 'Unknown Device')
 
-    print('asdf'+request.data)
-    
     if not username or not password:
         return Response({
             'error': 'Please provide both username and password'
