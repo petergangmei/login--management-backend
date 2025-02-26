@@ -118,6 +118,19 @@ def get_active_sessions(request):
 def logout_session(request):
     session_id = request.data.get('session_id')
     
+    if not session_id:
+        return Response({
+            'error': 'Please provide session_id'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        # Convert session_id to integer
+        session_id = int(session_id)
+    except (TypeError, ValueError):
+        return Response({
+            'error': 'Invalid session_id. Must be a number.'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
     try:
         session = UserSession.objects.get(
             id=session_id,
